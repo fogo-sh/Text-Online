@@ -23,5 +23,4 @@ func main() {
 	}
 
 	openViewer(c)
-
 }

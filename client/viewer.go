@@ -7,9 +7,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"os/signal"
 	"strings"
-	"time"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/charmbracelet/bubbles/viewport"
@@ -34,12 +32,6 @@ const (
 )
 
 func openViewer(conn *websocket.Conn) {
-	// Set PAGER_LOG to a path to log to a file. For example:
-	//
-	//     export PAGER_LOG=debug.log
-	//
-	// This becomes handy when debugging stuff since you can't debug to stdout
-	// because the UI is occupying it!
 	path := os.Getenv("PAGER_LOG")
 	if path != "" {
 		f, err := tea.LogToFile(path, "pager")
@@ -52,22 +44,19 @@ func openViewer(conn *websocket.Conn) {
 
 	p := tea.NewProgram(
 		initialModel(conn, string("Welcome")),
-
-		// Use the full size of the terminal in its "alternate screen buffer"
 		tea.WithAltScreen(),
-
-		// Also turn on mouse support so we can track the mouse wheel
 		tea.WithMouseCellMotion(),
 	)
 
 	if err := p.Start(); err != nil {
-		fmt.Println("could not run program:", err)
+		log.Println("could not run program:", err)
 		os.Exit(1)
 	}
 }
 
 type model struct {
 	c         *websocket.Conn
+	sub       chan string
 	content   string
 	ready     bool
 	viewport  viewport.Model
@@ -83,6 +72,7 @@ func initialModel(c *websocket.Conn, content string) model {
 	ti.Width = 20
 
 	return model{
+		sub:       make(chan string),
 		c:         c,
 		content:   content,
 		textInput: ti,
@@ -91,46 +81,11 @@ func initialModel(c *websocket.Conn, content string) model {
 }
 
 func (m model) Init() tea.Cmd {
-	go func() {
-		defer m.c.Close()
-
-	}()
-	go func() {
-		ticker := time.NewTicker(time.Second)
-		done := make(chan struct{})
-		interrupt := make(chan os.Signal, 1)
-		signal.Notify(interrupt, os.Interrupt)
-		defer ticker.Stop()
-		defer m.c.Close()
-		for {
-			select {
-			case <-done:
-				return
-			case t := <-ticker.C:
-				err := m.c.WriteMessage(websocket.TextMessage, []byte(t.String()))
-				if err != nil {
-					log.Println("write:", err)
-					return
-				}
-			case <-interrupt:
-				log.Println("interrupt")
-
-				// Cleanly close the connection by sending a close message and then
-				// waiting (with timeout) for the server to close the connection.
-				err := m.c.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
-				if err != nil {
-					log.Println("write close:", err)
-					return
-				}
-				select {
-				case <-done:
-				case <-time.After(time.Second):
-				}
-				return
-			}
-		}
-	}()
-	return textinput.Blink
+	return tea.Batch(
+		textinput.Blink,
+		listenForMessages(m.c, m.sub),
+		waitForMessages(m.sub),
+	)
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -148,7 +103,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			} else {
 				m.textInput.Focus()
 			}
-		case tea.KeyEnter, tea.KeyCtrlC, tea.KeyEsc:
+		case tea.KeyEnter:
+			err := m.c.WriteMessage(websocket.TextMessage, []byte(m.textInput.Value()))
+			if err != nil {
+				log.Println("write:", err)
+				return m, tea.Quit
+			}
+			m.textInput.SetValue("")
+		case tea.KeyCtrlC, tea.KeyEsc:
 			return m, tea.Quit
 		}
 
@@ -181,6 +143,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// This is needed for high-performance rendering only.
 			cmds = append(cmds, viewport.Sync(m.viewport))
 		}
+	case newMsg:
+		m.content = m.content + "\n" + msg.message
+		cutoff := wordwrap.String(m.content, m.viewport.Width)
+		m.viewport.SetContent(cutoff)
+		return m, waitForMessages(m.sub)
 	}
 
 	m.textInput, cmd = m.textInput.Update(msg)
