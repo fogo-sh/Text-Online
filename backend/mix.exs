@@ -13,14 +13,17 @@ defmodule TextOnline.MixProject do
 
   def application do
     [
-      extra_applications: [:logger],
-      mod: {TextOnline.Application, []}
+      mod: {TextOnline, []},
+      extra_applications: [:logger]
     ]
   end
 
   defp deps do
     [
-      {:cowboy, "~> 2.9"}
+      {:cowboy, "~> 2.9"},
+      {:plug, "~> 1.12"},
+      {:plug_cowboy, "~> 2.5"},
+      {:jason, "~> 1.2"}
     ]
   end
 end
