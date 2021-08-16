@@ -8,13 +8,13 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var addr = flag.String("addr", "echo.websocket.org", "http service address")
+var addr = flag.String("addr", "localhost:4000", "http service address")
 
 func main() {
 	flag.Parse()
 	log.SetFlags(0)
 
-	u := url.URL{Scheme: "ws", Host: *addr, Path: "/"}
+	u := url.URL{Scheme: "ws", Host: *addr, Path: "/ws"}
 	log.Printf("connecting to %s", u.String())
 
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
