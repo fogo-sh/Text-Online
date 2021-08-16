@@ -4,6 +4,7 @@ package main
 // component library.
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -104,7 +105,17 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.textInput.Focus()
 			}
 		case tea.KeyEnter:
-			err := m.c.WriteMessage(websocket.TextMessage, []byte(m.textInput.Value()))
+			serverMessage := &ServerMessage{
+				Type:    "message",
+				Message: m.textInput.Value(),
+			}
+			serverMessageBytes, err := json.Marshal(serverMessage)
+			if err != nil {
+				log.Println("marshal:", err)
+				return m, tea.Quit
+			}
+
+			err = m.c.WriteMessage(websocket.TextMessage, serverMessageBytes)
 			if err != nil {
 				log.Println("write:", err)
 				return m, tea.Quit

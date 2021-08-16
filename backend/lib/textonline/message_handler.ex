@@ -13,6 +13,11 @@ defmodule TextOnline.MessageHandler do
     raw_reply(text, state)
   end
 
+  defp reply(:ack, message, state) do
+    text = Jason.encode!(%{:type => :ack, :message => message})
+    raw_reply(text, state)
+  end
+
   def handle_raw(text, state) when is_binary(text) do
     case Jason.decode(text) do
       {:ok, decoded} -> TextOnline.MessageHandler.handle(decoded, state)
@@ -22,6 +27,10 @@ defmodule TextOnline.MessageHandler do
 
   def handle(%{"type" => "ping"}, state) do
     reply(:pong, state)
+  end
+
+  def handle(%{"type" => "message", "message" => message}, state) do
+    reply(:ack, message, state)
   end
 
   def handle(_, state) do

@@ -5,6 +5,11 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+type ServerMessage struct {
+	Type    string `json:"type"`
+	Message string `json:"message"`
+}
+
 type newMsg struct{ message string }
 
 type errMsg struct{ err error }
