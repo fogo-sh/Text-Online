@@ -1,0 +1,33 @@
+@import url("https://fonts.googleapis.com/css2?family=Overpass+Mono:wght@400;700&display=swap");
+
+html {
+  background: #000;
+}
+
+.chat-input {
+  position: absolute;
+  bottom: 0;
+  width: 80vw;
+  background: #000;
+  color: #fff;
+  font-weight: 700;
+  border: 2px solid #fff;
+  font-family: "Overpass Mono", monospace;
+}
+
+.message {
+  margin: 0.1rem;
+}
+
+.chat {
+  position: relative;
+  overflow: auto;
+  flex: 1;
+}
+
+#app {
+  color: #fff;
+  font-family: "Overpass Mono", monospace;
+  display: flex;
+  flex-direction: column;
+}
