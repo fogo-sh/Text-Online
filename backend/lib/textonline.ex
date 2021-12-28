@@ -1,6 +1,8 @@
 defmodule TextOnline do
   use Application
 
+  require Logger
+
   def start(_type, _args) do
     children = [
       Plug.Cowboy.child_spec(
@@ -16,6 +18,8 @@ defmodule TextOnline do
         name: Registry.TextOnline
       )
     ]
+
+    Logger.info("TextOnline running")
 
     opts = [strategy: :one_for_one, name: TextOnline.Application]
     Supervisor.start_link(children, opts)

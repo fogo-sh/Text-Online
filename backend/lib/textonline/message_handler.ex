@@ -1,4 +1,6 @@
 defmodule TextOnline.MessageHandler do
+  require Logger
+
   defp raw_reply(text, state) do
     {:reply, {:text, text}, state}
   end
@@ -30,6 +32,16 @@ defmodule TextOnline.MessageHandler do
   end
 
   def handle(%{"type" => "message", "message" => message}, state) do
+    Registry.dispatch(Registry.TextOnline, state.room_key, fn entries ->
+      for {pid, _} <- entries do
+        if pid != self() do
+          Logger.debug("#{inspect(self())} Sending #{inspect(pid)} message '#{inspect(message)}'")
+          message = Jason.encode!(%{:type => :msg, :message => message})
+          Process.send(pid, message, [])
+        end
+      end
+    end)
+
     reply(:ack, message, state)
   end
 
