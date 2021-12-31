@@ -28,7 +28,7 @@ export const chatOutput = () => {
     const incomingMessage = JSON.parse(event.data) as IncomingMessage;
     log("Incoming message", incomingMessage);
     const element = elementForMessage(incomingMessage);
-    chat.appendChild(element);
+    chat.prepend(element);
   };
 
   return chat;

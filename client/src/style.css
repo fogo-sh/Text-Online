@@ -18,6 +18,8 @@ body {
 }
 
 .chat {
+  display: flex;
+  flex-direction: column-reverse;
   position: relative;
   overflow: auto;
   flex: 1;
