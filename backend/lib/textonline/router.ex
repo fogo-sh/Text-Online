@@ -5,7 +5,7 @@ defmodule TextOnline.Router do
   plug(:dispatch)
 
   get "/" do
-    send_resp(conn, 200, "text-online")
+    send_resp(conn, 200, "Text Online")
   end
 
   match _ do

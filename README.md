@@ -1,9 +1,3 @@
-# text-online
+# Text Online
 
-msn messenger mmo
-
-elixir backend
-
-go cli
-
-a work in progress
+_a work in progress_
