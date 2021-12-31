@@ -28,6 +28,9 @@ defmodule TextOnline.SocketHandler do
       Registry.TextOnline
       |> Registry.register(room_key, %{})
 
+    message = Jason.encode!(%{:type => :msg, :message => "Welcome to Text Online!"})
+    Process.send(self(), message, [])
+
     {:ok, state}
   end
 
