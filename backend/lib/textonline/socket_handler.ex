@@ -5,22 +5,28 @@ defmodule TextOnline.SocketHandler do
 
   require Logger
 
-  @spec init(:cowboy_req.req(), any) :: {:cowboy_websocket, :cowboy_req.req(), %{}}
+  @spec init(:cowboy_req.req(), any) :: {:cowboy_websocket, :cowboy_req.req(), map}
   def init(request, _state) do
     Logger.debug("#{inspect(self())} init: request #{inspect(request)}")
-    {:cowboy_websocket, request, %{}}
+
+    username = inspect(self())
+    room_key = "room:" <> @default_room
+
+    state = %{
+      username: username,
+      room_key: room_key
+    }
+
+    {:cowboy_websocket, request, state}
   end
 
-  def websocket_init(state) do
+  @spec websocket_init(map) :: {:ok, map}
+  def websocket_init(state = %{room_key: room_key}) do
     Logger.debug("#{inspect(self())} websocket_init: state #{inspect(state)}")
-
-    room_key = "room:" <> @default_room
 
     {:ok, _} =
       Registry.TextOnline
       |> Registry.register(room_key, %{})
-
-    state = Map.put(state, :room_key, room_key)
 
     {:ok, state}
   end

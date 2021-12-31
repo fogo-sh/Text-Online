@@ -32,6 +32,8 @@ defmodule TextOnline.MessageHandler do
   end
 
   def handle(%{"type" => "message", "message" => message}, state) do
+    message = "#{state.username}: #{message}"
+
     Registry.dispatch(Registry.TextOnline, state.room_key, fn entries ->
       for {pid, _} <- entries do
         if pid != self() do
