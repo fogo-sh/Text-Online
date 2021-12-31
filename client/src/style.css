@@ -3,6 +3,7 @@
 * {
   box-sizing: border-box;
   font-size: 1.1rem;
+  font-family: "Overpass Mono", monospace;
 }
 
 html,
@@ -33,7 +34,6 @@ body {
   background: black;
   border: 0.05rem solid rgba(255, 255, 255, 0.2);
   font-weight: 700;
-  font-family: "Overpass Mono", monospace;
   color: white;
 }
 
@@ -51,6 +51,5 @@ body {
   flex-direction: column;
   height: 100%;
   color: white;
-  font-family: "Overpass Mono", monospace;
   padding: 3rem;
 }
