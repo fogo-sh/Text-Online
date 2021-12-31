@@ -1,25 +1,24 @@
 import { TypedMessage } from "./types";
 
-const VITE_WS_HOST = import.meta.env.VITE_WS_HOST as string ?? "ws://localhost:4000/ws";
+const WS_HOST =
+  (import.meta.env.TEXTONLINE_WS_HOST as string) ?? "ws://localhost:4000/ws";
 
-const websocket = new WebSocket(VITE_WS_HOST);
+export const client = new WebSocket(WS_HOST);
 
-const ready = new Promise((reject, resolve) => {
-  websocket.onopen = () => {
+export const ready = new Promise((reject, resolve) => {
+  client.onopen = () => {
     resolve();
   };
-  websocket.onerror = (error) => {
+  client.onerror = (error) => {
     reject(error);
   };
 });
 
-const sendMessage = (message: string) => {
+export const sendMessage = (message: string) => {
   const outgoingMessage: TypedMessage = {
     type: "message",
     message,
   };
 
-  websocket.send(JSON.stringify(outgoingMessage));
+  client.send(JSON.stringify(outgoingMessage));
 };
-
-export default { sendMessage, client: websocket, ready };

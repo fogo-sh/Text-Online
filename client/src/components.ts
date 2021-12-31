@@ -1,4 +1,4 @@
-import websockets from "./websockets";
+import * as websockets from "./websockets";
 
 export const chatInput = () => {
   const input = document.createElement("input");
@@ -6,7 +6,7 @@ export const chatInput = () => {
   input.placeholder = "Type your message here...";
   input.className = "chat-input";
   input.id = "chat-box";
-  console.log(input);
+
   input.addEventListener("keyup", (e) => {
     if (e.key === "Enter") {
       const message = input.value;
@@ -14,5 +14,6 @@ export const chatInput = () => {
       websockets.sendMessage(message);
     }
   });
+
   return input;
 };

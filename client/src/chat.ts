@@ -1,5 +1,5 @@
 import { IncomingMessage } from "./types";
-import websockets from "./websockets";
+import * as websockets from "./websockets";
 
 const renderMessage = ({ message }: IncomingMessage) => {
   const messageElement = document.createElement("div");
