@@ -1,6 +1,8 @@
 import { TypedMessage } from "./types";
 
-const websocket = new WebSocket("ws://localhost:4000/ws");
+const VITE_WS_HOST = import.meta.env.VITE_WS_HOST as string ?? "ws://localhost:4000/ws";
+
+const websocket = new WebSocket(VITE_WS_HOST);
 
 const ready = new Promise((reject, resolve) => {
   websocket.onopen = () => {

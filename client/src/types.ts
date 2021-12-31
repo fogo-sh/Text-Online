@@ -3,7 +3,12 @@ export type AckMessage = {
   message: string;
 };
 
-export type IncomingMessage = AckMessage;
+export type ChatMessage = {
+  type: "msg";
+  message: string;
+};
+
+export type IncomingMessage = AckMessage | ChatMessage;
 
 export type TypedMessage = {
   type: "message";

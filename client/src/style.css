@@ -5,8 +5,6 @@ html {
 }
 
 .chat-input {
-  position: absolute;
-  bottom: 0;
   width: 80vw;
   background: #000;
   color: #fff;
@@ -20,6 +18,7 @@ html {
 }
 
 .chat {
+  min-height: 50vh;
   position: relative;
   overflow: auto;
   flex: 1;
