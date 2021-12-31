@@ -2,6 +2,7 @@
 
 * {
   box-sizing: border-box;
+  font-size: 1.1rem;
 }
 
 html,
@@ -26,12 +27,14 @@ body {
 }
 
 .chat-input {
+  margin-top: 0.2rem;
   width: 100%;
+  padding: 0.3rem;
   background: black;
-  color: white;
+  border: 0.05rem solid rgba(255, 255, 255, 0.2);
   font-weight: 700;
-  border: 2px solid white;
   font-family: "Overpass Mono", monospace;
+  color: white;
 }
 
 .message {
@@ -49,5 +52,5 @@ body {
   height: 100%;
   color: white;
   font-family: "Overpass Mono", monospace;
-  padding: 1rem;
+  padding: 3rem;
 }
