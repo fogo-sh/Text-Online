@@ -1,8 +1,7 @@
 import "./style.css";
-import { chatInput } from "./components";
-import chatOutput from "./chat";
+import { chatOutput, chatInput } from "./chat";
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
   const app = document.getElementById("app");
 
   if (app === null) {
