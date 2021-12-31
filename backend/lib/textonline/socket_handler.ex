@@ -5,6 +5,7 @@ defmodule TextOnline.SocketHandler do
 
   require Logger
 
+  @spec init(:cowboy_req.req(), any) :: {:cowboy_websocket, :cowboy_req.req(), %{}}
   def init(request, _state) do
     Logger.debug("#{inspect(self())} init: request #{inspect(request)}")
     {:cowboy_websocket, request, %{}}

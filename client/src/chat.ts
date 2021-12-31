@@ -1,12 +1,11 @@
 import { IncomingMessage } from "./types";
 import websockets from "./websockets";
 
-const renderMessage = (message: IncomingMessage) => {
-  return `
-    <div class="message">
-        Mitch: ${message.message}
-    </div>
-  `;
+const renderMessage = ({ message }: IncomingMessage) => {
+  const messageElement = document.createElement("div");
+  messageElement.className = "message";
+  messageElement.innerText = `Mitch: ${message}`;
+  return messageElement;
 };
 
 const render = (message: IncomingMessage) => {
@@ -25,7 +24,7 @@ const chatOutput = () => {
   chat.className = "chat";
 
   websockets.client.onmessage = function (event: MessageEvent) {
-    chat.innerHTML = chat.innerHTML + render(JSON.parse(event.data));
+    chat.appendChild(render(JSON.parse(event.data)));
   };
 
   return chat;
